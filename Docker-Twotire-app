@@ -1,0 +1,258 @@
+Containerised Two tier application python and mysql::--
+
+Dockerfile::-
+
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# install required packages for system
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y gcc default-libmysqlclient-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements file into the container
+COPY requirements.txt .
+
+# Install app dependencies
+RUN pip install mysqlclient
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+# Specify the command to run your application
+CMD ["python", "app.py"]
+
+==============================================================================================================================================================================================
+
+:docker build -t pythonapp . #buid the docker image#
+
+:docker network create twotire
+
+:docker network ls
+  NETWORK ID     NAME      DRIVER    SCOPE
+	93b713991dda   bridge    bridge    local
+	360a5a96130b   host      host      local
+	d33c2c85825b   none      null      local
+	f6a4e0ab5d34   twotire   bridge    local
+
+:docker run -d -p 5000:5000 --network=twotire -e MYSQL_HOST=mysql(db container name)  -e MYSQL_USER=admin  -e MYSQL_PASSWORD=admin -e MYSQL_DB=myDb --name=pythonapp pythonapp:latest 	
+                  
+
+:docker run -d -p 3306:3306 --network=twotire -e MYSQL_DATABASE=myDb -e MYSQL_USER=admin  -e MYSQL_PASSWORD=admin -e MYSQL_ROOT_PASSWORD='admin' --name=mysql mysql:5.7
+
+:docker network inspect twotire:--
+
+	[
+    {
+        "Name": "twotire",
+        "Id": "f6a4e0ab5d34b202264deaa2f46568687cbc8524fb3c03978d2fcd5d99dddb8c",
+        "Created": "2023-10-19T10:24:19.571186419Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "6fba1eabc33c5e631251dc57957a61f1849b7acafe239c8f0b6a159c523dfce6": {
+                "Name": "mysql",
+                "EndpointID": "3cc4825c6e4065c3a37d1065d37dad61cb5e1cd79bd1c8d8c32abb02c864a9bf",
+                "MacAddress": "02:42:ac:12:00:03",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            },
+            "9db99d4d0620f0efba49835a45e0b5b8f9410a6f430ef97b65234dc6832f1f37": {
+                "Name": "pythonapp",
+                "EndpointID": "39e1fd725d3a376f95d9c5ede71bdefa2bcd0c80e9c73c4a40d9673c20cdab84",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+:docker exec -it(intaractive terminal) 13029f6c623f(mysql cant id) bash(open and give bash command line page)
+ 	bash-4.2#
+	mysql -u root -p
+	Enter password:admin
+
+		Welcome to the MySQL monitor.  Commands end with ; or \g.
+		Your MySQL connection id is 3
+		Server version: 5.7.43 MySQL Community Server (GPL)
+
+		Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+		Oracle is a registered trademark of Oracle Corporation and/or its
+		affiliates. Other names may be trademarks of their respective
+		owners.
+
+		Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+		:mysql>
+
+ :mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| myDb               |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.01 sec)
+
+:mysql> use myDb;
+	  Database changed
+
+:mysql> CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    message TEXT
+);-->enter
+
+:mysql> CREATE TABLE messages (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     message TEXT
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+-->by now we added table to the mysql database. go to ip:5000 and check----
+
+
+######################################################################
+Hello Dosto, Let's make a 2 Tier Application with Flask and MYSQL!####
+######################################################################
+
+After adding the data and submitt.go to container and login to mysql and run the below query.
+
+mysql> select * from messages;
+o/p:
+
++----+------------------------------+
+| id | message                      |
++----+------------------------------+
+|  1 | This my 1st word in the db....    |
+|  2 | This my 2nd word in the db..       |
+|  3 | This my 3rd word in the db..|
++----+------------------------------+
+3 rows in set (0.01 sec)
+
+2 tire python-flask(front and backend) and database(mysql) connected using docker container.
+
+====================================================================================================================================================================================================================
+
+######################################################################
+      Two tire application containersied using docker-compose
+######################################################################
+
+=====>> to cerat compose need to install docker-compose
+	:sudo apt install docker-compose -y
+	:docker-compose -v
+	:docker-compose version 1.29.2, build unknown
+
+======>>we have to creat the yml file -yet another markup language.
+
+	:vim docker-compose.yml
+		version: '3'
+		services:
+		   backend:
+			image: sagarsgsg/pythonapp:latest
+			ports:
+			  - "5000:5000"
+			environment:
+			  MYSQL_HOST="mysql"
+			  MYSQL_USER="admin"  
+			  MYSQL_PASSWORD="admin"  
+			  MYSQL_DB="myDb"
+
+			depends_on:
+			    - mysql   =====================>>it will execute first and then python will execute or else it will through an error as db not found.
+
+		   mysql:
+		      image: mysql:5.7
+
+		      environment:
+ 			     MYSQL_DATABASE="myDb"
+			     MYSQL_USER="admin" 
+			     MYSQL_PASSWORD="admin"
+			     MYSQL_ROOT_PASSWORD="admin" 
+		      ports:
+			- "3306:3306"
+
+     volumes:
+			- ./message.sql:/docker-entrypoint-initdb.d/message.sql
+      - mysql-data:/var/lib/mysql
+volumes:
+		- mysql-data:
+
+
+--->> to start the container
+:docker-compose up -d
+
+
+
+######################################################################
+Hello Dosto, Let's make a 2 Tier Application with Flask and MYSQL!####
+######################################################################
+
+After adding the data and submitt.go to container and login to mysql and run the below query.
+
+mysql> select * from messages;
+o/p:
++----+------------------------------+
+| id | message                      |
++----+------------------------------+
+|  1 | This my 1st word in the db....    |
+|  2 | This my 2nd word in the db..       |
+|  3 | This my 3rd word in the db..|
++----+------------------------------+
+3 rows in set (0.01 sec)
+
+
+2 tire python-flask(front and backend) and database(mysql) connected using docker-compose container.
+
+----->> To stop the container
+    :docker-compose down
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Note @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		      volumes:
+			- ./message.sql:/docker-entrypoint-initdb.d/message.sql   ----->To add table to mysql. it is there in mesage.sql we have to run this scriptscript. 
+											 /docker-entrypoint-initdb.d-->docker will get initialised with /message.sql...
+
+											in this location data ./message.sql: map with docker get initialise when it start.
+											/docker-entrypoint-initdb.d/message.sql--->in docker-entrypoint there will be initdb. 
+											where u can initailise ur database will do here with message.sql
+
+			When container goes down the data we will go na lost so we will use volume to store it in particular folder of host operating system(in laptop).
+			- mysql-data:is the folder called persisted volume in the host operating system .
+			/var/lib/mysql is where the container data will store that we are copieng it into the persistance volume created(folder).
+
+			- mysql-data:/var/lib/mysql -------->> we are assinging the volume mysql-data and 
+								copy all the data of the container(var/lib/mysql) to volume created(folder).
+              volumes:
+		- mysql-data: ----->dpersistance volume created(folder) is created here and above it got assigned with the container storage.
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Note @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			
+
