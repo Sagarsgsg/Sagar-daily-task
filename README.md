@@ -28,7 +28,7 @@ NoneType: Represents the None object, which is used to indicate the absence of a
 
 Custom Data Types:
 You can also define your custom data types using classes and objects.
-===============================================================
+===========================================
 
 Strings:::--
 
