@@ -28,7 +28,7 @@ NoneType: Represents the None object, which is used to indicate the absence of a
 
 Custom Data Types:
 You can also define your custom data types using classes and objects.
-==================================================================================================================================
+================================================================================================
 
 Strings:::--
 
@@ -47,7 +47,7 @@ Escape sequences: Special characters like newline (\n), tab (\t), and others are
 String methods: Python provides many built-in methods for string manipulation, such as split(), join(), and startswith().
 
 
-=====================================================================================================================================
+=======================================================================================================
 
 Numberic Data Type:::-
 
@@ -61,7 +61,7 @@ Be aware of potential issues with floating-point precision, which can lead to sm
 Python also provides built-in functions for mathematical operations, such as abs(), round(), and math module for advanced functions.
 
 
-===================================================================================================================================
+======================================================================================================
 
 Keywords in Python:
 
