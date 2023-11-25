@@ -28,7 +28,7 @@ NoneType: Represents the None object, which is used to indicate the absence of a
 
 Custom Data Types:
 You can also define your custom data types using classes and objects.
-==========================================================================================================================================
+==================================================================================================================================
 
 Strings:::--
 
@@ -47,7 +47,7 @@ Escape sequences: Special characters like newline (\n), tab (\t), and others are
 String methods: Python provides many built-in methods for string manipulation, such as split(), join(), and startswith().
 
 
-==========================================================================================================================================
+=====================================================================================================================================
 
 Numberic Data Type:::-
 
@@ -61,7 +61,7 @@ Be aware of potential issues with floating-point precision, which can lead to sm
 Python also provides built-in functions for mathematical operations, such as abs(), round(), and math module for advanced functions.
 
 
-=========================================================================================================================================
+===================================================================================================================================
 
 Keywords in Python:
 
@@ -121,7 +121,7 @@ global: It is used to declare a global variable within a function's scope.
 
 nonlocal: It is used to declare a variable as nonlocal, which allows modifying a variable in an enclosing (but non-global) scope.
 
-=========================================================================================================================================
+================================================================================================================================
 
 Understanding Variables in Python:
 In Python, a variable is a named storage location used to store data. Variables are essential for programming as they allow us to work with data, manipulate it, and make our code more flexible and reusable.
@@ -247,7 +247,7 @@ print(pi)
 In this example, we import the math module and then use functions and variables from it. You can also import specific elements from modules using the from module import element syntax.
 
 
-=========================================================================================================================================
+=====================================================================================================================================
 
 
 Introduction to Operators in Python::==
