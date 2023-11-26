@@ -11,4 +11,4 @@ name:sagu
 age:30
 city:londan
 
-f--> 2 value is used in the string we use the letter f
+f--> 2 values used in the string we use the letter f
